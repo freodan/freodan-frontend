@@ -35,53 +35,57 @@ import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 
+import EmptyNotice from './empty-notice';
 import VideoCard from './video-card';
 
 const timePeriods = [
-    { key: "now", title: "Happening now" },
-    { key: "upcoming", title: "Upcoming" },
-    { key: "today", title: "Today" },
-    { key: "week", title: "Last week" },
-    { key: "month", title: "Last month" },
-    { key: "older", title: "Older" },
+  { key: "now", title: "Happening now" },
+  { key: "upcoming", title: "Upcoming" },
+  { key: "today", title: "Today" },
+  { key: "week", title: "Last week" },
+  { key: "month", title: "Last month" },
+  { key: "older", title: "Older" },
 ];
 
 export default function VideoFeed(props) {
-    const [sub, add, remove] = useSub();
-    const [data, loaded, total] = useFeed(sub);
+  const [sub, add, remove] = useSub();
+  const [data, loaded, total, video] = useFeed(sub);
 
-    const type = props.type;
-    const showdesc = false;
+  const type = props.type;
+  const showdesc = false;
 
-    console.log("videofeed", data, loaded, total);
+  console.log("videofeed", data, loaded, total, video);
 
-    return (
-        <>
-            {
-                timePeriods.map((t) => data && data[t.key] && data[t.key][type] &&
-                    <Fragment key={t.key}>
-                        <Stack direction="row" spacing={0} sx={{ padding: "0" }}>
-                            <Typography variant="h6" component="div" sx={{ flexGrow: 1, paddingBottom: "1rem", lineHeight: "1.75" }}>
-                                {t.title}
-                            </Typography>
-                        </Stack>
-                        <VideoGrid feed={data[t.key][type]} showdesc={showdesc} />
-                        <Divider sx={{ margin: "1.5rem 0" }} />
-                    </Fragment>
-                )
-            }
-        </>
-    );
+  return (
+    <>
+      {
+        timePeriods.map((t) => data && data[t.key] && data[t.key][type] &&
+          <Fragment key={t.key}>
+            <Stack direction="row" spacing={0} sx={{ padding: "0" }}>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1, paddingBottom: "1rem", lineHeight: "1.75" }}>
+                {t.title}
+              </Typography>
+            </Stack>
+            <VideoGrid feed={data[t.key][type]} showdesc={showdesc} />
+            <Divider sx={{ margin: "1.5rem 0" }} />
+          </Fragment>
+        )
+      }
+      {
+        video == 0 && <EmptyNotice />
+      }
+    </>
+  );
 }
 
 function VideoGrid(props) {
-    return (
-        <Grid container spacing={3}>
-            {props.feed && props.feed.map((v) =>
-                <Grid key={`${v.host}_${v.videoId}`} xs={12} sm={6} md={4} lg={3}>
-                    <VideoCard video={v} showdesc={props.showdesc} />
-                </Grid>
-            )}
+  return (
+    <Grid container spacing={3}>
+      {props.feed && props.feed.map((v) =>
+        <Grid key={`${v.host}_${v.videoId}`} xs={12} sm={6} md={4} lg={3}>
+          <VideoCard video={v} showdesc={props.showdesc} />
         </Grid>
-    );
+      )}
+    </Grid>
+  );
 }
